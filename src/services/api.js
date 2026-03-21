@@ -135,19 +135,74 @@ export const toggleGameStatus = async (game_id, currentStatus, admin_id) => {
 export const fetchLogs = async (page = 0, limit = 20) => {
   const from = page * limit
   const to = from + limit - 1
-  const { data, error, count } = await supabase
+  
+  // We can only join admins because created_by has an FK to admins. 
+  // students and games don't have FK constraints in score_logs.
+  const { data: logs, error, count } = await supabase
     .from('score_logs')
     .select(`
       *,
-      students!inner(username),
-      admins!inner(username),
-      games!inner(game_name)
+      admins(username)
     `, { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(from, to)
 
   if (error) throw error
-  return { logs: data, count }
+
+  if (logs && logs.length > 0) {
+    const studentIds = [...new Set(logs.map(l => l.student_id).filter(Boolean))]
+    const gameIds = [...new Set(logs.map(l => l.game_id).filter(Boolean))]
+
+    const [{ data: students }, { data: games }] = await Promise.all([
+      studentIds.length ? supabase.from('students').select('student_id, username').in('student_id', studentIds) : Promise.resolve({ data: [] }),
+      gameIds.length ? supabase.from('games').select('game_id, game_name').in('game_id', gameIds) : Promise.resolve({ data: [] })
+    ])
+
+    const studentMap = (students || []).reduce((acc, s) => { acc[s.student_id] = s; return acc }, {})
+    const gameMap = (games || []).reduce((acc, g) => { acc[g.game_id] = g; return acc }, {})
+
+    const enrichedLogs = logs.map(log => ({
+      ...log,
+      students: studentMap[log.student_id] || { username: 'Unknown' },
+      games: gameMap[log.game_id] || { game_name: 'Unknown Game' }
+    }))
+
+    return { logs: enrichedLogs, count }
+  }
+
+  return { logs: [], count }
+}
+
+export const fetchAdminLogs = async (adminId, limit = 50) => {
+  const { data: logs, error } = await supabase
+    .from('score_logs')
+    .select('*')
+    .eq('created_by', adminId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) throw error
+
+  if (logs && logs.length > 0) {
+    const studentIds = [...new Set(logs.map(l => l.student_id).filter(Boolean))]
+    const gameIds = [...new Set(logs.map(l => l.game_id).filter(Boolean))]
+
+    const [{ data: students }, { data: games }] = await Promise.all([
+      studentIds.length ? supabase.from('students').select('student_id, username').in('student_id', studentIds) : Promise.resolve({ data: [] }),
+      gameIds.length ? supabase.from('games').select('game_id, game_name').in('game_id', gameIds) : Promise.resolve({ data: [] })
+    ])
+
+    const studentMap = (students || []).reduce((acc, s) => { acc[s.student_id] = s; return acc }, {})
+    const gameMap = (games || []).reduce((acc, g) => { acc[g.game_id] = g; return acc }, {})
+
+    return logs.map(log => ({
+      ...log,
+      students: studentMap[log.student_id] || { username: 'Unknown' },
+      games: gameMap[log.game_id] || { game_name: 'Unknown Game' }
+    }))
+  }
+
+  return logs || []
 }
 
 export const fetchStudentScores = async (studentId) => {
@@ -156,7 +211,7 @@ export const fetchStudentScores = async (studentId) => {
     .select('*, games(game_name)')
     .eq('student_id', studentId)
     .order('created_at', { ascending: false })
-    
+
   if (error) throw error
   return data
 }

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { getStudentDetails, fetchActiveGames, addScoreAPI, undoScoreAPI } from '../services/api'
+import { getStudentDetails, fetchActiveGames, addScoreAPI, undoScoreAPI, fetchAdminLogs } from '../services/api'
 import QRScanner from '../components/QRScanner'
 import PointsInput from '../components/PointsInput'
 import { LogOut, ScanLine, ArrowLeft, Trophy, RotateCcw } from 'lucide-react'
+import { supabase } from '../services/supabaseClient'
 
 export default function Admin() {
   const { admin, logoutAdmin } = useAuth()
@@ -19,9 +20,34 @@ export default function Admin() {
   const [lastScoreId, setLastScoreId] = useState(null)
   const [error, setError] = useState('')
 
+  const [logs, setLogs] = useState([])
+
   useEffect(() => {
     loadGames()
   }, [])
+
+  useEffect(() => {
+    if (!admin) return
+    loadLogs()
+    
+    const channelLogs = supabase.channel(`admin_logs_${admin.admin_id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'score_logs', filter: `admin_id=eq.${admin.admin_id}` }, () => {
+        loadLogs()
+      })
+      .subscribe()
+      
+    return () => supabase.removeChannel(channelLogs)
+  }, [admin])
+
+  const loadLogs = async () => {
+    if (!admin) return
+    try {
+      const data = await fetchAdminLogs(admin.admin_id)
+      setLogs(data)
+    } catch(err) { 
+      console.error('Failed to load logs', err) 
+    }
+  }
 
   const loadGames = async () => {
     try {
@@ -240,6 +266,42 @@ export default function Admin() {
           </div>
         </div>
       )}
+
+      {/* Activity Logs Panel */}
+      <div className="mt-8 card overflow-hidden border-[rgba(255,255,255,0.1)] shadow-lg animate-fade-in">
+        <h3 className="text-xl font-bold mb-4 tracking-wide pb-4 border-b border-[rgba(255,255,255,0.05)] text-white">YOUR RECENT ACTIVITY</h3>
+        {logs.length === 0 ? (
+          <p className="text-[var(--muted)] py-6 text-center font-bold tracking-widest text-sm">NO ACTIVITY YET</p>
+        ) : (
+          <div className="flex flex-col gap-4 max-h-80 overflow-y-auto pr-2 pb-4 hide-scrollbar">
+            {logs.map(log => (
+              <div key={log.log_id} className="flex flex-col bg-[rgba(0,0,0,0.25)] border border-[rgba(255,255,255,0.06)] rounded-xl p-4 shadow-md transition-colors hover:border-[rgba(255,255,255,0.15)] relative overflow-hidden">
+                {/* Optional subtle left accent bar based on action */}
+                <div className={`absolute left-0 top-0 bottom-0 w-1 ${log.action_type === 'ADD' ? 'bg-[var(--green)]' : log.action_type === 'DELETE' ? 'bg-[var(--red)]' : 'bg-[var(--primary-base)]'}`}></div>
+
+                <div className="flex justify-between items-center mb-3">
+                  <span className={`px-2.5 py-1 rounded text-[10px] uppercase font-bold tracking-widest ${log.action_type === 'ADD' ? 'bg-[rgba(74,222,128,0.15)] text-[var(--green)]' : log.action_type === 'DELETE' ? 'bg-[rgba(248,113,113,0.15)] text-[var(--red)]' : 'bg-[rgba(255,0,127,0.15)] text-[var(--primary-base)]'}`}>
+                    {log.action_type}
+                  </span>
+                  <span className="text-[11px] text-[var(--muted)] font-bold tracking-widest uppercase">
+                    {new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <div className="font-bold text-lg text-white tracking-wide">{log.students?.username || 'Unknown'}</div>
+                    <div className="text-xs text-[var(--muted)] font-bold tracking-widest mt-1 uppercase">{log.games?.game_name || 'Unknown Game'}</div>
+                  </div>
+                  <div className={`text-2xl font-bold drop-shadow-md tracking-wider ${log.action_type === 'ADD' ? 'text-[var(--green)]' : log.action_type === 'DELETE' ? 'text-[var(--red)]' : 'text-[var(--primary-base)]'}`}>
+                    {log.action_type === 'ADD' ? `+${log.new_points}` : log.action_type === 'DELETE' ? `-${log.old_points}` : `${log.old_points}→${log.new_points}`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
