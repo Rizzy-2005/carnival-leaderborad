@@ -124,14 +124,14 @@ export default function Admin() {
 
       {state === 'IDLE' && (
         <div className="flex-1 flex flex-col items-center justify-center py-6 animate-fade-in">
-          <div className="card w-full flex flex-col items-center gap-8 py-16 border-[var(--primary-base)] border-2 relative overflow-hidden shadow-[0_0_40px_rgba(167,139,250,0.15)]">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[var(--primary-base)] opacity-10 blur-[80px]"></div>
+          <div className="card w-full flex flex-col items-center gap-8 py-16 border-[var(--primary-base)] border-2 relative overflow-hidden shadow-[0_0_40px_rgba(255,0,127,0.3)]">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[var(--primary-base)] opacity-15 blur-[80px]"></div>
             <ScanLine size={80} className="text-[var(--primary-base)] relative z-10" />
             <div className="text-center relative z-10">
               <h2 className="text-2xl font-bold tracking-widest text-white mb-2">READY</h2>
               <p className="text-[var(--muted)] font-bold tracking-widest text-sm uppercase">Tap below to assign points</p>
             </div>
-            <button onClick={() => setState('SCANNING')} className="btn-primary w-full max-w-xs text-xl py-5 shadow-[0_0_20px_rgba(167,139,250,0.4)] tracking-widest relative z-10 font-bold border border-[var(--primary-base)] bg-[rgba(167,139,250,0.2)] hover:bg-[rgba(167,139,250,0.4)]">
+            <button onClick={() => setState('SCANNING')} className="btn-primary w-full max-w-xs text-xl py-5 shadow-[0_0_20px_rgba(255,0,127,0.4)] tracking-widest relative z-10 font-bold border border-[var(--primary-base)] bg-[rgba(255,0,127,0.2)] hover:bg-[rgba(255,0,127,0.4)]">
               SCAN QR
             </button>
           </div>
@@ -143,7 +143,7 @@ export default function Admin() {
           <button onClick={() => {setState('IDLE'); setError('')}} className="flex items-center gap-2 text-[var(--muted)] hover:text-white font-bold tracking-widest text-sm uppercase self-start bg-[var(--surface)] px-4 py-2 rounded-full border border-[var(--border)]">
             <ArrowLeft size={16} /> Cancel
           </button>
-          <div className="card p-4 flex flex-col items-center border-[var(--primary-base)] border border-opacity-30 relative overflow-hidden text-center shadow-[0_0_30px_rgba(167,139,250,0.1)]">
+          <div className="card p-4 flex flex-col items-center border-[var(--primary-base)] border border-opacity-30 relative overflow-hidden text-center shadow-[0_0_30px_rgba(255,0,127,0.2)]">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--primary-base)] to-transparent animate-pulse"></div>
             <ScanLine size={32} className="text-[var(--primary-base)] mb-4 mt-2" />
             <p className="text-white font-bold tracking-widest text-lg mb-4">POSITION QR IN FRAME</p>
@@ -198,7 +198,7 @@ export default function Admin() {
           <button 
             onClick={handleAddPoints} 
             disabled={points <= 0 || !selectedGame}
-            className={`btn-primary w-full text-xl py-5 mt-4 tracking-widest font-bold border-2 ${points > 0 && selectedGame ? 'border-[var(--primary-base)] shadow-[0_0_20px_rgba(167,139,250,0.5)] bg-gradient-to-r from-[var(--primary-base)] to-[var(--accent)] text-white' : 'opacity-50 cursor-not-allowed bg-[var(--surface)] text-[var(--muted)] border-[var(--border)]'}`}
+            className={`btn-primary w-full text-xl py-5 mt-4 tracking-widest font-bold border-2 ${points > 0 && selectedGame ? 'border-[var(--primary-base)] shadow-[0_0_20px_rgba(255,0,127,0.5)] bg-gradient-to-r from-[var(--primary-base)] to-[var(--accent)] text-white' : 'opacity-50 cursor-not-allowed bg-[var(--surface)] text-[var(--muted)] border-[var(--border)]'}`}
           >
             CONFIRM +{points} PTS
           </button>
@@ -219,7 +219,7 @@ export default function Admin() {
           </div>
 
           <div className="flex flex-col gap-4 w-full mt-4">
-            <button onClick={resetScanner} className="btn-primary w-full text-xl py-5 tracking-widest font-bold shadow-[0_0_20px_rgba(167,139,250,0.4)]">
+            <button onClick={resetScanner} className="btn-primary w-full text-xl py-5 tracking-widest font-bold shadow-[0_0_20px_rgba(255,0,127,0.4)]">
               SCAN NEXT STUDENT
             </button>
             <button onClick={handleUndo} className="btn-secondary w-full text-lg py-4 tracking-widest font-bold flex items-center justify-center gap-3 border-2 border-[var(--red)] text-[var(--red)] hover:bg-[rgba(248,113,113,0.1)] bg-[var(--surface)]">

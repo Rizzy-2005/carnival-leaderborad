@@ -67,8 +67,8 @@ export default function Dashboard() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card flex flex-col items-center justify-center text-center pb-8 border-[var(--primary-base)] border-2 shadow-[0_0_30px_rgba(167,139,250,0.15)] relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-[var(--primary-base)] opacity-5 blur-[100px] pointer-events-none"></div>
+        <div className="card flex flex-col items-center justify-center text-center pb-8 border-[var(--primary-base)] border-2 shadow-[0_0_30px_rgba(255,0,127,0.3)] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full bg-[var(--primary-base)] opacity-10 blur-[100px] pointer-events-none"></div>
           <h2 className="text-lg font-bold mb-6 text-[var(--accent)] tracking-widest drop-shadow-md">YOUR PLAYER PASS</h2>
           <div className="bg-white p-2 rounded-[24px]">
             <QRDisplay studentId={student.student_id} />

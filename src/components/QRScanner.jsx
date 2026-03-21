@@ -120,7 +120,7 @@ export default function QRScanner({ onScan, tracking }) {
           position: "relative",
           borderRadius: "16px",
           overflow: "hidden",
-          border: "2px solid #a78bfa",
+          border: "2px solid var(--primary-base)",
           background: "#000", /* pure black while loading */
         }}
       >
@@ -142,7 +142,7 @@ export default function QRScanner({ onScan, tracking }) {
             style={{
               width: "220px",
               height: "220px",
-              border: "2.5px solid #a78bfa",
+              border: "2.5px solid var(--primary-base)",
               borderRadius: "14px",
               boxShadow: "0 0 0 9999px rgba(0,0,0,0.45)",
             }}
