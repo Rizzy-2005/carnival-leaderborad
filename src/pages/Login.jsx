@@ -7,7 +7,7 @@ export default function Login() {
   const [phone, setPhone] = useState('')
   const [username, setUsername] = useState('')
   const [college, setCollege] = useState('')
-  const [isRegistering, setIsRegistering] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { loginStudentSession } = useAuth()
