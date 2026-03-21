@@ -112,35 +112,29 @@ function AdminsTab({ adminId }) {
         <button type="submit" className="btn-primary whitespace-nowrap px-8 font-bold tracking-widest text-sm">+ ADD</button>
       </form>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-[var(--border)] text-[var(--muted)] text-xs tracking-widest uppercase">
-              <th className="pb-4 font-bold">Username</th>
-              <th className="pb-4 font-bold">Role</th>
-              <th className="pb-4 font-bold text-right pt-2 pr-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map(a => (
-              <tr key={a.admin_id} className="border-b border-[rgba(255,255,255,0.05)] last:border-0 hover:bg-[rgba(255,255,255,0.02)] transition-colors">
-                <td className="py-4 font-bold text-white text-lg">{a.username}</td>
-                <td className="py-4">
-                  <span className={`text-xs px-3 py-1 rounded font-bold tracking-widest bg-[rgba(255,255,255,0.05)] ${a.role === 'SUPER_ADMIN' ? 'text-[var(--primary-base)] shadow-[0_0_10px_rgba(167,139,250,0.2)]' : 'text-[var(--green)]'}`}>
-                    {a.role}
-                  </span>
-                </td>
-                <td className="py-4 text-right pr-2">
-                  {a.role !== 'SUPER_ADMIN' && (
-                    <button onClick={() => handleDelete(a.admin_id)} className="text-[var(--muted)] hover:text-[var(--red)] p-2 hover:bg-[rgba(248,113,113,0.1)] rounded-lg transition-colors">
-                      <Trash2 size={20} />
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1 sm:pr-2 hide-scrollbar">
+        {admins.map(a => (
+          <div key={a.admin_id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] rounded-xl p-4 transition-colors hover:bg-[rgba(255,255,255,0.05)] gap-4">
+            
+            <div className="flex flex-col gap-1.5 pl-1">
+              <span className="font-bold text-lg text-white tracking-wide">{a.username}</span>
+              <span className={`w-fit text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded border ${a.role === 'SUPER_ADMIN' ? 'bg-[rgba(255,0,127,0.1)] text-[var(--primary-base)] border-[rgba(255,0,127,0.2)]' : 'bg-[rgba(74,222,128,0.1)] text-[var(--green)] border-[rgba(74,222,128,0.2)]'}`}>
+                {a.role}
+              </span>
+            </div>
+
+            <div className="flex items-center self-end sm:self-auto">
+              {a.role !== 'SUPER_ADMIN' && (
+                <button 
+                  onClick={() => handleDelete(a.admin_id)} 
+                  className="text-[var(--red)] p-2 bg-[rgba(248,113,113,0.05)] hover:bg-[var(--red)] hover:text-white border border-[rgba(248,113,113,0.2)] hover:border-transparent rounded-lg transition-colors flex items-center gap-2 text-xs font-bold tracking-widest"
+                >
+                  <Trash2 size={16} /> REMOVE
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -183,18 +177,29 @@ function GamesTab({ adminId }) {
         <button type="submit" className="btn-primary px-8 font-bold tracking-widest whitespace-nowrap text-sm">+ ADD GAME</button>
       </form>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {games.map(g => (
-          <div key={g.game_id} className="p-6 border border-[rgba(255,255,255,0.05)] rounded-2xl flex flex-col justify-between gap-6 bg-[rgba(0,0,0,0.2)] hover:border-[var(--primary-base)] transition-colors group">
-            <span className="font-bold text-xl text-white tracking-wide">{g.game_name}</span>
-            <button
-              onClick={() => handleToggle(g.game_id, g.status)}
-              className={`w-full py-3 rounded-xl text-xs font-bold tracking-widest uppercase transition-all border ${g.status === 'ACTIVE' ? 'border-[var(--green)] bg-[rgba(74,222,128,0.1)] text-[var(--green)] hover:bg-[rgba(74,222,128,0.2)] shadow-[0_0_15px_rgba(74,222,128,0.1)]' : 'border-[var(--red)] bg-[rgba(248,113,113,0.1)] text-[var(--red)] hover:bg-[rgba(248,113,113,0.2)]'}`}
-            >
-              {g.status}
-            </button>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        {games.map(g => {
+          const isActive = g.status === 'ACTIVE';
+          return (
+            <div key={g.game_id} className="p-4 sm:p-5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] rounded-xl flex flex-col justify-between gap-4 transition-colors hover:bg-[rgba(255,255,255,0.05)]">
+              
+              <div className="flex justify-between items-start gap-2">
+                <span className="font-bold text-lg text-white tracking-wide truncate">{g.game_name}</span>
+                <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase border ${isActive ? 'bg-[rgba(74,222,128,0.1)] text-[var(--green)] border-[rgba(74,222,128,0.2)]' : 'bg-[rgba(248,113,113,0.1)] text-[var(--red)] border-[rgba(248,113,113,0.2)]'}`}>
+                  {g.status}
+                </span>
+              </div>
+
+              <button
+                onClick={() => handleToggle(g.game_id, g.status)}
+                className={`w-full py-2.5 mt-1 rounded-lg text-xs font-bold tracking-widest uppercase transition-colors border ${isActive ? 'border-[rgba(248,113,113,0.4)] text-[var(--red)] hover:bg-[var(--red)] hover:text-white' : 'border-[rgba(74,222,128,0.4)] text-[var(--green)] hover:bg-[var(--green)] hover:text-black'} bg-[rgba(0,0,0,0.2)]`}
+              >
+                {isActive ? 'DEACTIVATE' : 'ACTIVATE'}
+              </button>
+
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -263,45 +268,52 @@ function LogsTab({ adminId }) {
         </div>
       )}
 
-      <div className="overflow-x-auto flex-1">
-        <table className="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-[var(--border)] text-[var(--muted)] tracking-widest uppercase text-xs">
-              <th className="pb-4 font-bold">Timestamp</th>
-              <th className="pb-4 font-bold">Op</th>
-              <th className="pb-4 font-bold">Player</th>
-              <th className="pb-4 font-bold">Game</th>
-              <th className="pb-4 font-bold">Points</th>
-              <th className="pb-4 font-bold">Admin</th>
-              <th className="pb-4 font-bold text-right pt-1 pr-1">Modify</th>
-            </tr>
-          </thead>
-          <tbody>
-            {logs.map(log => (
-              <tr key={log.log_id} className="border-b border-[rgba(255,255,255,0.02)] last:border-0 hover:bg-[rgba(255,255,255,0.02)] transition-colors">
-                <td className="py-4 text-[var(--muted)] font-bold">{new Date(log.created_at).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}</td>
-                <td className="py-4">
-                  <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-widest ${log.action_type === 'ADD' ? 'bg-[rgba(74,222,128,0.1)] text-[var(--green)] border border-[rgba(74,222,128,0.2)]' : log.action_type === 'DELETE' ? 'bg-[rgba(248,113,113,0.1)] text-[var(--red)] border border-[rgba(248,113,113,0.2)]' : 'bg-[rgba(167,139,250,0.1)] text-[var(--primary-base)] border border-[rgba(167,139,250,0.2)]'}`}>
-                    {log.action_type}
+      <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-1 sm:pr-2 hide-scrollbar">
+        {logs.map(log => {
+          const isAdd = log.action_type === 'ADD';
+          const isDelete = log.action_type === 'DELETE';
+          const colorClass = isAdd ? 'text-[var(--green)]' : isDelete ? 'text-[var(--red)]' : 'text-[var(--primary-base)]';
+          
+          return (
+            <div key={log.log_id} className="flex flex-col bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] rounded-xl p-4 transition-colors hover:bg-[rgba(255,255,255,0.05)]">
+              
+              <div className="flex justify-between items-center mb-3">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-widest border ${isAdd ? 'bg-[rgba(74,222,128,0.1)] text-[var(--green)] border-[rgba(74,222,128,0.2)]' : isDelete ? 'bg-[rgba(248,113,113,0.1)] text-[var(--red)] border-[rgba(248,113,113,0.2)]' : 'bg-[rgba(167,139,250,0.1)] text-[var(--primary-base)] border-[rgba(167,139,250,0.2)]'}`}>
+                  {log.action_type}
+                </span>
+                <span className="text-[10px] sm:text-xs text-[var(--muted)] font-bold tracking-widest uppercase">
+                  {new Date(log.created_at).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' })}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-end gap-2">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="font-bold text-lg sm:text-xl text-white tracking-wide">{log.students?.username || 'Unknown'}</span>
+                    <span className="text-[var(--muted)] text-sm font-bold block sm:inline">•</span>
+                    <span className="font-bold text-sm text-[var(--accent)] tracking-widest uppercase">{log.games?.game_name || 'Unknown Game'}</span>
+                  </div>
+                  <div className="text-[10px] text-[var(--muted)] font-bold tracking-widest uppercase mt-1">
+                    By: {log.admins?.username || 'System'}
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end gap-2">
+                  <span className={`font-bold tracking-wider text-xl drop-shadow-md ${colorClass}`}>
+                    {isAdd ? `+${log.new_points}` : isDelete ? `-${log.old_points}` : `${log.old_points} \u2192 ${log.new_points}`}
                   </span>
-                </td>
-                <td className="py-4 font-bold text-white text-base">{log.students?.username}</td>
-                <td className="py-4 text-[var(--accent)] font-bold">{log.games?.game_name}</td>
-                <td className="py-4 font-bold text-[var(--green)] text-base">
-                  {log.action_type === 'ADD' ? `+${log.new_points}` : log.action_type === 'DELETE' ? <span className="text-[var(--red)]">-{log.old_points}</span> : <span className="text-[var(--primary-base)]">{log.old_points} → {log.new_points}</span>}
-                </td>
-                <td className="py-4 text-[var(--muted)] font-bold">{log.admins?.username}</td>
-                <td className="py-4 text-right pr-1">
-                  {log.action_type === 'ADD' && log.score_id && (
+                  
+                  {isAdd && log.score_id && (
                     <button onClick={() => { setEditingLog(log); setNewPoints(log.new_points) }} className="text-[var(--muted)] hover:text-white p-2 hover:bg-[rgba(255,255,255,0.1)] rounded-lg transition-colors">
-                      <Edit3 size={18} />
+                      <Edit3 size={16} />
                     </button>
                   )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+
+            </div>
+          )
+        })}
       </div>
 
       <div className="flex justify-between items-center mt-6 pt-6 border-t border-[var(--border)]">
