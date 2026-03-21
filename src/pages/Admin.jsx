@@ -167,12 +167,24 @@ export default function Admin() {
             <ArrowLeft size={16} /> Back
           </button>
           
-          <div className="card border-[var(--green)] border-2 bg-[rgba(74,222,128,0.05)] shadow-[0_0_20px_rgba(74,222,128,0.1)]">
-            <div className="flex justify-between items-center mb-1">
-              <h2 className="text-2xl font-bold text-white tracking-wide">{student.username}</h2>
-              <Trophy className="text-[var(--green)]" size={28} />
+          <div className="card border-[var(--primary-base)] border-2 shadow-[0_0_20px_rgba(255,0,127,0.2)]">
+            <div className="flex justify-between items-start mb-4 pb-4 border-b border-[rgba(255,255,255,0.1)]">
+              <div>
+                <h2 className="text-3xl font-bold text-white tracking-wide mb-1">{student.username}</h2>
+                <p className="text-[var(--accent)] text-sm font-bold tracking-widest uppercase">{student.college}</p>
+              </div>
+              <div className="bg-[rgba(74,222,128,0.1)] border border-[rgba(74,222,128,0.3)] rounded-xl px-4 py-2 text-center">
+                <div className="text-[10px] text-[var(--muted)] font-bold tracking-widest uppercase mb-1 drop-shadow-md">TOTAL PTS</div>
+                <div className="text-2xl font-bold text-[var(--green)] leading-none drop-shadow-md">{student.total_points ?? 0}</div>
+              </div>
             </div>
-            <p className="text-[var(--green)] text-xs font-bold tracking-widest uppercase opacity-80">{student.college}</p>
+            
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center py-3 px-4 bg-[rgba(255,255,255,0.03)] rounded-xl border border-[rgba(255,255,255,0.05)]">
+                <span className="text-xs text-[var(--muted)] font-bold tracking-widest uppercase">Phone Number</span>
+                <span className="text-base text-white font-medium tracking-wider">{student.phone}</span>
+              </div>
+            </div>
           </div>
 
           <div className="card flex flex-col gap-6">
