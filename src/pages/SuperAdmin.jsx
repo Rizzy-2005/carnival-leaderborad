@@ -178,18 +178,28 @@ function GamesTab({ adminId }) {
       </form>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-        {games.map(g => (
-          <div key={g.game_id} className="p-5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] rounded-xl flex flex-col justify-between gap-5 transition-colors hover:bg-[rgba(255,255,255,0.05)]">
-            <span className="font-bold text-lg text-white tracking-wide truncate pl-1">{g.game_name}</span>
+        {games.map(g => {
+          const isActive = g.status === 'ACTIVE';
+          return (
+            <div key={g.game_id} className="p-4 sm:p-5 bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] rounded-xl flex flex-col justify-between gap-4 transition-colors hover:bg-[rgba(255,255,255,0.05)]">
+              
+              <div className="flex justify-between items-start gap-2">
+                <span className="font-bold text-lg text-white tracking-wide truncate">{g.game_name}</span>
+                <span className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase border ${isActive ? 'bg-[rgba(74,222,128,0.1)] text-[var(--green)] border-[rgba(74,222,128,0.2)]' : 'bg-[rgba(248,113,113,0.1)] text-[var(--red)] border-[rgba(248,113,113,0.2)]'}`}>
+                  {g.status}
+                </span>
+              </div>
 
-            <button
-              onClick={() => handleToggle(g.game_id, g.status)}
-              className={`w-full py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-colors border ${g.status === 'ACTIVE' ? 'border-[var(--green)] bg-[rgba(74,222,128,0.1)] text-[var(--green)] hover:bg-[rgba(74,222,128,0.15)]' : 'border-[var(--red)] bg-[rgba(248,113,113,0.1)] text-[var(--red)] hover:bg-[rgba(248,113,113,0.15)]'}`}
-            >
-              {g.status}
-            </button>
-          </div>
-        ))}
+              <button
+                onClick={() => handleToggle(g.game_id, g.status)}
+                className={`w-full py-2.5 mt-1 rounded-lg text-xs font-bold tracking-widest uppercase transition-colors border ${isActive ? 'border-[rgba(248,113,113,0.4)] text-[var(--red)] hover:bg-[var(--red)] hover:text-white' : 'border-[rgba(74,222,128,0.4)] text-[var(--green)] hover:bg-[var(--green)] hover:text-black'} bg-[rgba(0,0,0,0.2)]`}
+              >
+                {isActive ? 'DEACTIVATE' : 'ACTIVATE'}
+              </button>
+
+            </div>
+          )
+        })}
       </div>
     </div>
   )
