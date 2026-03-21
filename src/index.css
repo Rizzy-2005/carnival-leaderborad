@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap');
+
 :root {
   /* Carnival Theme Colors */
   --bg: #130a21; /* Deep purple night sky */
@@ -14,8 +16,8 @@
   --muted: #b5a4d4;
   
   /* Fonts */
-  --font-body: 'Outfit', sans-serif;
-  --font-display: 'Fredoka', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Montserrat', sans-serif;
 }
 
 * {
@@ -221,6 +223,24 @@ input, select {
 .rank-item:hover {
   transform: translateY(-3px) scale(1.01);
   background: rgba(38, 20, 69, 0.9);
+}
+
+.bg-leaderboard {
+  position: relative;
+  min-height: 100vh;
+  z-index: 0;
+}
+
+.bg-leaderboard::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(10, 0, 30, 0.6), rgba(0, 0, 0, 0.85)), url('./assets/Whisk_imzhhtmyijy3ugz10cnmftotumzmrtllrmzw0ym.gif') center/cover no-repeat;
+  z-index: -1;
+  transform: translateZ(0); /* Hardware acceleration for smooth scrolling */
 }
 
 /* Animations */
