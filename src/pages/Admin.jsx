@@ -5,6 +5,7 @@ import { getStudentDetails, fetchActiveGames, addScoreAPI, undoScoreAPI, fetchAd
 import QRScanner from '../components/QRScanner'
 import PointsInput from '../components/PointsInput'
 import { LogOut, ScanLine, ArrowLeft, Trophy, RotateCcw } from 'lucide-react'
+import Loader from '../components/Loader'
 import { supabase } from '../services/supabaseClient'
 
 export default function Admin() {
@@ -181,8 +182,8 @@ export default function Admin() {
       {state === 'LOADING' && (
         <div className="flex-1 flex items-center justify-center">
           <div className="card p-12 text-center border-[var(--primary-base)] border border-opacity-30">
-            <div className="w-16 h-16 border-4 border-[var(--primary-base)] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <div className="text-xl font-bold text-white tracking-widest animate-pulse">PROCESSING...</div>
+            <Loader />
+            <div className="text-xl font-bold text-white tracking-widest animate-pulse mt-6">PROCESSING...</div>
           </div>
         </div>
       )}
