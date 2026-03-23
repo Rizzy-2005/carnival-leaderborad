@@ -11,7 +11,7 @@ export default function Loader({ fullScreen = false }) {
       <img 
         src={hestiaLogo} 
         alt="Loading..." 
-        className="w-32 h-32 object-contain animate-breathe drop-shadow-[0_0_20px_rgba(255,0,127,0.5)]" 
+        className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 object-contain animate-breathe drop-shadow-[0_0_15px_rgba(255,0,127,0.5)] sm:drop-shadow-[0_0_20px_rgba(255,0,127,0.5)]" 
       />
     </div>
   );
