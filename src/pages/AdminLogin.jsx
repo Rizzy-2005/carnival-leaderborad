@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { loginAdmin } from '../services/api'
 import { Shield } from 'lucide-react'
+import Loader from '../components/Loader'
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
@@ -33,6 +34,7 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
+      {loading && <Loader fullScreen />}
       <form onSubmit={handleLogin} className="card w-full max-w-md flex flex-col gap-6 p-8 border-[var(--primary-base)] border border-opacity-30 relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[var(--primary-base)] opacity-10 blur-[80px] rounded-full point-events-none"></div>

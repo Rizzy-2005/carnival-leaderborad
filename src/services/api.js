@@ -21,8 +21,14 @@ export const loginStudent = async (phone, username, college) => {
       .insert([{ phone, username, college }])
       .select()
       .single()
-    if (insertError) throw insertError
+    if (insertError) {
+      if (insertError.code === '23505' && (insertError.message.includes('username') || insertError.details?.includes('username'))) {
+        throw new Error('This username is already taken. Please choose another one.')
+      }
+      throw insertError
+    }
     student = newStudent
+    student.isNewRecord = true
   }
   return student
 }

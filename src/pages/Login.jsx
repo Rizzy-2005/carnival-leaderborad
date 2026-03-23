@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { loginStudent } from '../services/api'
+import Loader from '../components/Loader'
 
 export default function Login() {
   const [phone, setPhone] = useState('')
@@ -9,6 +10,7 @@ export default function Login() {
   const [college, setCollege] = useState('')
   const [isRegistering, setIsRegistering] = useState(true)
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const { loginStudentSession } = useAuth()
   const navigate = useNavigate()
@@ -16,9 +18,20 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
+    setMessage('')
     setLoading(true)
     try {
       const student = await loginStudent(phone, isRegistering ? username : null, isRegistering ? college : null)
+      
+      if (isRegistering && !student.isNewRecord) {
+        setMessage('Account already exists with this phone number. Logging you in...')
+        setTimeout(() => {
+          loginStudentSession(student)
+          navigate('/dashboard')
+        }, 2000)
+        return
+      }
+
       loginStudentSession(student)
       navigate('/dashboard')
     } catch (err) {
@@ -39,6 +52,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
+      {loading && <Loader fullScreen />}
       <form onSubmit={handleLogin} className="card w-full max-w-md flex flex-col gap-6 p-8">
         <div className="text-center mb-2">
           <h2 className="text-4xl font-bold gradient-text mb-2">Player Portal</h2>
@@ -46,6 +60,7 @@ export default function Login() {
         </div>
 
         {error && <div className="p-3 bg-[rgba(248,113,113,0.1)] text-[var(--red)] border border-[rgba(248,113,113,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{error}</div>}
+        {message && <div className="p-3 bg-[rgba(52,211,153,0.1)] text-[var(--green)] border border-[rgba(52,211,153,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{message}</div>}
 
         <div className="flex flex-col gap-4">
           <input 
@@ -83,18 +98,23 @@ export default function Login() {
           {loading ? 'PROCESSING...' : (isRegistering ? 'REGISTER & PLAY' : 'LOGIN')}
         </button>
 
-        <div className="text-center mt-2">
-          <button 
-            type="button" 
-            onClick={() => {
-              setIsRegistering(!isRegistering); 
-              setError('');
-            }} 
-            className="text-[var(--muted)] hover:text-white text-sm tracking-widest font-bold transition-colors"
-          >
-            {isRegistering ? 'ALREADY HAVE AN ACCOUNT? LOGIN' : 'NEW PLAYER? REGISTER HERE'}
-          </button>
+        <div className="my-5 w-full flex items-center justify-center gap-4">
+          <div className="h-px bg-gradient-to-r from-transparent to-[var(--border)] flex-1"></div>
+          <span className="text-xs text-[var(--muted)] font-bold tracking-widest uppercase drop-shadow-sm">OR</span>
+          <div className="h-px bg-gradient-to-l from-transparent to-[var(--border)] flex-1"></div>
         </div>
+
+        <button 
+          type="button" 
+          onClick={() => {
+            setIsRegistering(!isRegistering); 
+            setError('');
+            setMessage('');
+          }} 
+          className="btn-primary w-full mt-1 text-sm py-3 drop-shadow-lg tracking-widest"
+        >
+          {isRegistering ? 'ALREADY HAVE AN ACCOUNT? LOGIN' : 'NEW PLAYER? REGISTER HERE'}
+        </button>
       </form>
     </div>
   )

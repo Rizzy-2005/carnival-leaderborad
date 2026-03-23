@@ -5,10 +5,12 @@ import { fetchLeaderboard } from '../services/api'
 import SearchBar from '../components/SearchBar'
 import { Trophy, Medal } from 'lucide-react'
 import couponImage from '../assets/final.png'
+import Loader from '../components/Loader'
 
 export default function Leaderboard() {
   const [students, setStudents] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -40,6 +42,8 @@ export default function Leaderboard() {
       setStudents(data)
     } catch (err) {
       console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -97,28 +101,34 @@ export default function Leaderboard() {
         </header>
 
         <div className="flex flex-col gap-4 pb-10">
-          {filteredStudents.map((student, index) => {
-            const rank = index + 1
-            return (
-              <div
-                key={student.student_id}
-                className={`rank-item card flex items-center justify-between ${getRankClass(rank)}`}
-              >
-                <div className="flex items-center gap-4 md:gap-6">
-                  <div className="w-12 text-center flex justify-center">{getRankIcon(rank)}</div>
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide">{student.username}</h3>
-                    <p className="text-[var(--muted)] text-sm md:text-base tracking-wider uppercase">{student.college}</p>
+          {loading ? (
+            <div className="py-8">
+              <Loader />
+            </div>
+          ) : (
+            filteredStudents.map((student, index) => {
+              const rank = index + 1
+              return (
+                <div
+                  key={student.student_id}
+                  className={`rank-item card flex items-center justify-between ${getRankClass(rank)}`}
+                >
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <div className="w-12 text-center flex justify-center">{getRankIcon(rank)}</div>
+                    <div>
+                      <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide">{student.username}</h3>
+                      <p className="text-[var(--muted)] text-sm md:text-base tracking-wider uppercase">{student.college}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl md:text-4xl font-bold text-[var(--primary-base)] drop-shadow-md">{student.total_points}</div>
+                    <div className="text-xs md:text-sm text-[var(--muted)] font-bold tracking-widest">PTS</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl md:text-4xl font-bold text-[var(--primary-base)] drop-shadow-md">{student.total_points}</div>
-                  <div className="text-xs md:text-sm text-[var(--muted)] font-bold tracking-widest">PTS</div>
-                </div>
-              </div>
-            )
-          })}
-          {filteredStudents.length === 0 && (
+              )
+            })
+          )}
+          {!loading && filteredStudents.length === 0 && (
             <div className="text-center py-12 text-[var(--muted)] font-bold text-lg">
               No players found.
             </div>
