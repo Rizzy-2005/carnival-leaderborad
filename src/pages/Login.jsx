@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true)
     try {
       const student = await loginStudent(phone, isRegistering ? username : null, isRegistering ? college : null)
-      
+
       if (isRegistering && !student.isNewRecord) {
         setMessage('Account already exists with this phone number. Logging you in...')
         setTimeout(() => {
@@ -35,10 +35,10 @@ export default function Login() {
       loginStudentSession(student)
       navigate('/dashboard')
     } catch (err) {
-      if (err.code === 'PGRST116') {
+      if (err.code === 'USER_NOT_FOUND' || err.code === 'PGRST116') {
         if (!isRegistering) {
           setIsRegistering(true)
-          setError('Phone not found. Please register.')
+          setError('User not found. Please register.')
         } else {
           setError('Registration failed')
         }
@@ -63,30 +63,30 @@ export default function Login() {
         {message && <div className="p-3 bg-[rgba(52,211,153,0.1)] text-[var(--green)] border border-[rgba(52,211,153,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{message}</div>}
 
         <div className="flex flex-col gap-4">
-          <input 
-            type="tel" 
-            placeholder="Phone Number" 
-            className="input-field text-lg py-3" 
-            value={phone} 
+          <input
+            type="tel"
+            placeholder="Phone Number"
+            className="input-field text-lg py-3"
+            value={phone}
             onChange={e => setPhone(e.target.value)}
             required
           />
 
           {isRegistering && (
             <div className="animate-fade-in flex flex-col gap-4">
-              <input 
-                type="text" 
-                placeholder="Username" 
-                className="input-field text-lg py-3 uppercase" 
-                value={username} 
+              <input
+                type="text"
+                placeholder="Username"
+                className="input-field text-lg py-3 uppercase"
+                value={username}
                 onChange={e => setUsername(e.target.value)}
                 required
               />
-              <input 
-                type="text" 
-                placeholder="College" 
-                className="input-field text-lg py-3 uppercase" 
-                value={college} 
+              <input
+                type="text"
+                placeholder="College"
+                className="input-field text-lg py-3 uppercase"
+                value={college}
                 onChange={e => setCollege(e.target.value)}
                 required
               />
@@ -104,13 +104,13 @@ export default function Login() {
           <div className="h-px bg-gradient-to-l from-transparent to-[var(--border)] flex-1"></div>
         </div>
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           onClick={() => {
-            setIsRegistering(!isRegistering); 
+            setIsRegistering(!isRegistering);
             setError('');
             setMessage('');
-          }} 
+          }}
           className="btn-primary w-full mt-1 text-sm py-3 drop-shadow-lg tracking-widest"
         >
           {isRegistering ? 'ALREADY HAVE AN ACCOUNT? LOGIN' : 'NEW PLAYER? REGISTER HERE'}

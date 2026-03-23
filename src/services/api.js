@@ -15,6 +15,11 @@ export const loginStudent = async (phone, username, college) => {
 
   // Register if not found
   if (!student) {
+    if (!username && !college) {
+      const err = new Error('Phone not found. Please register.')
+      err.code = 'USER_NOT_FOUND'
+      throw err
+    }
     if (!username || !college) throw new Error('Username and college required for registration')
     const { data: newStudent, error: insertError } = await supabase
       .from('students')
