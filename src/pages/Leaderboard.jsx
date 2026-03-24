@@ -4,7 +4,7 @@ import { supabase } from '../services/supabaseClient'
 import { fetchLeaderboard } from '../services/api'
 import SearchBar from '../components/SearchBar'
 import { Trophy, Medal } from 'lucide-react'
-import couponImage from '../assets/final.png'
+import couponImage from '../assets/final1.png'
 import Loader from '../components/Loader'
 
 export default function Leaderboard() {
