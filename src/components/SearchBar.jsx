@@ -5,23 +5,33 @@ export default function SearchBar({ onSearch }) {
   const [term, setTerm] = useState('')
 
   useEffect(() => {
-    const delay = setTimeout(() => {
-      onSearch(term)
-    }, 300)
+    const delay = setTimeout(() => { onSearch(term) }, 300)
     return () => clearTimeout(delay)
   }, [term, onSearch])
 
   return (
-    <div className="relative w-full">
-      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-        <Search size={18} className="text-[var(--muted)]" />
+    <div style={{ position: 'relative', width: '100%' }}>
+      <div style={{
+        position: 'absolute',
+        inset: 'auto auto auto 0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        left: '1rem',
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        color: 'var(--muted)',
+      }}>
+        <Search size={16} />
       </div>
       <input
+        id="leaderboard-search"
         type="text"
-        className="input-field pl-11 py-3 bg-[var(--surface)] text-lg"
-        placeholder="Search username..."
+        className="input-field"
+        placeholder="Search player..."
         value={term}
         onChange={(e) => setTerm(e.target.value)}
+        style={{ paddingLeft: '2.6rem', paddingRight: '1rem' }}
       />
     </div>
   )

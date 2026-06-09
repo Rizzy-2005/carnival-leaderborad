@@ -8,11 +8,12 @@ import Loader from '../components/Loader'
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { loginAdminSession } = useAuth()
-  const navigate = useNavigate()
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
+  const { loginAdminSession }   = useAuth()
+  const navigate                = useNavigate()
 
+  /* ── Auth logic (unchanged) ────────────────────────────────── */
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
@@ -32,42 +33,130 @@ export default function AdminLogin() {
     }
   }
 
+  /* ── Render ───────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.25rem',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Moody bg orbs */}
+      <div className="float-orb" style={{ width: 500, height: 500, top: '-22%', left: '-16%',  background: 'radial-gradient(circle, hsl(264,82%,40%), transparent)', opacity: 0.22 }} />
+      <div className="float-orb" style={{ width: 360, height: 360, bottom: '-14%', right: '-10%', background: 'radial-gradient(circle, hsl(348,80%,40%), transparent)', opacity: 0.16 }} />
+
       {loading && <Loader fullScreen />}
-      <form onSubmit={handleLogin} className="card w-full max-w-md flex flex-col gap-6 p-8 border-[var(--primary-base)] border border-opacity-30 relative overflow-hidden">
-        {/* Subtle background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[var(--primary-base)] opacity-10 blur-[80px] rounded-full point-events-none"></div>
-        
-        <div className="text-center mb-2 flex flex-col items-center">
-          <Shield className="text-[var(--primary-base)] mb-4" size={48} />
-          <h2 className="text-3xl font-bold text-white mb-2 tracking-wide">Admin Portal</h2>
-          <p className="text-[var(--muted)] text-sm tracking-widest uppercase">Authorized Personnel Only</p>
+
+      <form
+        onSubmit={handleLogin}
+        className="glass-card animate-float-in"
+        style={{
+          width: '100%',
+          maxWidth: '400px',
+          padding: '2.75rem 2.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.2rem',
+          position: 'relative',
+          zIndex: 1,
+          border: '1px solid rgba(124,58,237,0.28)',
+          boxShadow: '0 8px 60px rgba(124,58,237,0.18), 0 8px 32px rgba(0,0,0,0.6)',
+        }}
+      >
+        {/* Top accent line */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, hsl(264,82%,58%), hsl(318,100%,62%))', borderRadius: '24px 24px 0 0' }} />
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '0.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{
+            width: 76, height: 76,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(124,58,237,0.14)',
+            border: '1.5px solid rgba(124,58,237,0.38)',
+            borderRadius: '22px',
+            marginBottom: '1.1rem',
+            boxShadow: '0 0 28px rgba(124,58,237,0.25)',
+          }}>
+            <Shield size={38} style={{ color: 'hsl(264,82%,72%)' }} />
+          </div>
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 800,
+            fontSize: '1.85rem',
+            color: 'white',
+            marginBottom: '0.3rem',
+            letterSpacing: '-0.01em',
+          }}>
+            Admin Portal
+          </h2>
+          <p style={{
+            color: 'var(--muted)',
+            fontSize: '0.72rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            fontWeight: 600,
+          }}>
+            Authorized Personnel Only
+          </p>
         </div>
 
-        {error && <div className="p-3 bg-[rgba(248,113,113,0.1)] text-[var(--red)] border border-[rgba(248,113,113,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{error}</div>}
+        {/* Error */}
+        {error && (
+          <div style={{
+            padding: '0.75rem 1rem',
+            background: 'rgba(244,63,94,0.1)',
+            border: '1px solid rgba(244,63,94,0.3)',
+            borderRadius: '12px',
+            color: 'var(--red)',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            textAlign: 'center',
+          }}>
+            {error}
+          </div>
+        )}
 
-        <div className="flex flex-col gap-4 relative z-10">
-          <input 
-            type="text" 
-            placeholder="Username" 
-            className="input-field text-lg py-3 bg-[rgba(23,23,31,0.8)]" 
-            value={username} 
-            onChange={e => setUsername(e.target.value)}
+        {/* Fields */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+          <input
+            id="admin-username"
+            type="text"
+            placeholder="Username"
+            className="input-field"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            className="input-field text-lg py-3 bg-[rgba(23,23,31,0.8)]" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)}
+          <input
+            id="admin-password"
+            type="password"
+            placeholder="Password"
+            className="input-field"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary flex items-center justify-center gap-2 w-full mt-4 text-lg py-3 tracking-widest relative z-10 border border-[var(--primary-base)] bg-[rgba(167,139,250,0.15)] hover:bg-[rgba(167,139,250,0.3)] transition-colors">
-          {loading ? 'AUTHENTICATING...' : 'ACCESS PORTAL'}
+        {/* Submit */}
+        <button
+          id="admin-submit"
+          type="submit"
+          disabled={loading}
+          className="btn-primary"
+          style={{
+            width: '100%',
+            fontSize: '1rem',
+            padding: '1rem',
+            marginTop: '0.15rem',
+          }}
+        >
+          {loading ? '🔐 Authenticating...' : '🛡️ Access Portal'}
         </button>
       </form>
     </div>

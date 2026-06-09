@@ -5,23 +5,28 @@ import { loginStudent } from '../services/api'
 import Loader from '../components/Loader'
 
 export default function Login() {
-  const [phone, setPhone] = useState('')
-  const [username, setUsername] = useState('')
-  const [college, setCollege] = useState('')
+  const [phone, setPhone]             = useState('')
+  const [username, setUsername]       = useState('')
+  const [college, setCollege]         = useState('')
   const [isRegistering, setIsRegistering] = useState(true)
-  const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { loginStudentSession } = useAuth()
-  const navigate = useNavigate()
+  const [error, setError]             = useState('')
+  const [message, setMessage]         = useState('')
+  const [loading, setLoading]         = useState(false)
+  const { loginStudentSession }       = useAuth()
+  const navigate                      = useNavigate()
 
+  /* ── Auth logic (unchanged) ────────────────────────────────── */
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
     setMessage('')
     setLoading(true)
     try {
-      const student = await loginStudent(phone, isRegistering ? username : null, isRegistering ? college : null)
+      const student = await loginStudent(
+        phone,
+        isRegistering ? username : null,
+        isRegistering ? college  : null,
+      )
 
       if (isRegistering && !student.isNewRecord) {
         setMessage('Account already exists with this phone number. Logging you in...')
@@ -50,70 +55,186 @@ export default function Login() {
     }
   }
 
+  const toggleMode = () => {
+    setIsRegistering((v) => !v)
+    setError('')
+    setMessage('')
+  }
+
+  /* ── Render ───────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.25rem',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Floating bg orbs */}
+      <div className="float-orb" style={{ width: 460, height: 460, top: '-18%', right: '-14%',  background: 'radial-gradient(circle, hsl(264,82%,55%), transparent)' }} />
+      <div className="float-orb" style={{ width: 340, height: 340, bottom: '-8%', left: '-8%',  background: 'radial-gradient(circle, hsl(318,100%,60%), transparent)' }} />
+      <div className="float-orb" style={{ width: 240, height: 240, bottom: '25%', right: '8%', background: 'radial-gradient(circle, hsl(38,96%,54%), transparent)', opacity: 0.18 }} />
+
       {loading && <Loader fullScreen />}
-      <form onSubmit={handleLogin} className="card w-full max-w-md flex flex-col gap-6 p-8">
-        <div className="text-center mb-2">
-          <h2 className="text-4xl font-bold gradient-text mb-2">Player Portal</h2>
-          <p className="text-[var(--muted)]">{isRegistering ? 'Create your new player account' : 'Login with your phone number'}</p>
+
+      <form
+        onSubmit={handleLogin}
+        className="glass-card animate-float-in"
+        style={{
+          width: '100%',
+          maxWidth: '430px',
+          padding: '2.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.15rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        {/* Top accent line */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, hsl(318,100%,62%), hsl(38,96%,54%), hsl(264,82%,58%))', borderRadius: '24px 24px 0 0' }} />
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '0.25rem' }}>
+          <div style={{ fontSize: '2.75rem', marginBottom: '0.65rem', lineHeight: 1 }}>🎟️</div>
+          <h2
+            className="shimmer-text"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 900,
+              fontSize: '2rem',
+              letterSpacing: '-0.02em',
+              marginBottom: '0.4rem',
+            }}
+          >
+            Player Portal
+          </h2>
+          <p style={{ color: 'var(--muted)', fontSize: '0.85rem', lineHeight: 1.5 }}>
+            {isRegistering
+              ? 'Create your account and join the carnival fun!'
+              : 'Welcome back, carnival champion! 🎉'}
+          </p>
         </div>
 
-        {error && <div className="p-3 bg-[rgba(248,113,113,0.1)] text-[var(--red)] border border-[rgba(248,113,113,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{error}</div>}
-        {message && <div className="p-3 bg-[rgba(52,211,153,0.1)] text-[var(--green)] border border-[rgba(52,211,153,0.3)] rounded-lg text-sm text-center font-bold tracking-wide">{message}</div>}
+        {/* Error / success banners */}
+        {error && (
+          <div style={{
+            padding: '0.75rem 1rem',
+            background: 'rgba(244,63,94,0.1)',
+            border: '1px solid rgba(244,63,94,0.3)',
+            borderRadius: '12px',
+            color: 'var(--red)',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            textAlign: 'center',
+          }}>
+            {error}
+          </div>
+        )}
+        {message && (
+          <div style={{
+            padding: '0.75rem 1rem',
+            background: 'rgba(20,184,166,0.1)',
+            border: '1px solid rgba(20,184,166,0.3)',
+            borderRadius: '12px',
+            color: 'var(--green)',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            textAlign: 'center',
+          }}>
+            {message}
+          </div>
+        )}
 
-        <div className="flex flex-col gap-4">
+        {/* Fields */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
           <input
+            id="login-phone"
             type="tel"
-            placeholder="Phone Number"
-            className="input-field text-lg py-3"
+            placeholder="📱  Phone Number"
+            className="input-field"
             value={phone}
-            onChange={e => setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value)}
             required
           />
 
           {isRegistering && (
-            <div className="animate-fade-in flex flex-col gap-4">
+            <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <input
+                id="login-username"
                 type="text"
-                placeholder="Username"
-                className="input-field text-lg py-3 uppercase"
+                placeholder="🎭  Username"
+                className="input-field"
+                style={{ textTransform: 'uppercase' }}
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
               <input
+                id="login-college"
                 type="text"
-                placeholder="College"
-                className="input-field text-lg py-3 uppercase"
+                placeholder="🏫  College"
+                className="input-field"
+                style={{ textTransform: 'uppercase' }}
                 value={college}
-                onChange={e => setCollege(e.target.value)}
+                onChange={(e) => setCollege(e.target.value)}
                 required
               />
             </div>
           )}
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary w-full mt-2 text-xl py-3 drop-shadow-lg tracking-widest">
-          {loading ? 'PROCESSING...' : (isRegistering ? 'REGISTER & PLAY' : 'LOGIN')}
+        {/* Primary CTA */}
+        <button
+          id="login-submit"
+          type="submit"
+          disabled={loading}
+          className="btn-primary"
+          style={{ width: '100%', fontSize: '1rem', padding: '1rem', marginTop: '0.15rem' }}
+        >
+          {loading
+            ? '⏳ Processing...'
+            : isRegistering
+            ? '🚀 Register & Play'
+            : '🎉 Let\'s Go!'}
         </button>
 
-        <div className="my-5 w-full flex items-center justify-center gap-4">
-          <div className="h-px bg-gradient-to-r from-transparent to-[var(--border)] flex-1"></div>
-          <span className="text-xs text-[var(--muted)] font-bold tracking-widest uppercase drop-shadow-sm">OR</span>
-          <div className="h-px bg-gradient-to-l from-transparent to-[var(--border)] flex-1"></div>
+        {/* Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ height: 1, flex: 1, background: 'rgba(255,255,255,0.07)' }} />
+          <span style={{ color: 'var(--muted)', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase' }}>or</span>
+          <div style={{ height: 1, flex: 1, background: 'rgba(255,255,255,0.07)' }} />
         </div>
 
+        {/* Toggle mode */}
         <button
+          id="login-toggle"
           type="button"
-          onClick={() => {
-            setIsRegistering(!isRegistering);
-            setError('');
-            setMessage('');
+          onClick={toggleMode}
+          style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '9999px',
+            padding: '0.8rem',
+            color: 'var(--muted)',
+            fontSize: '0.83rem',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600,
+            letterSpacing: '0.03em',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            textAlign: 'center',
           }}
-          className="btn-primary w-full mt-1 text-sm py-3 drop-shadow-lg tracking-widest"
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--muted)' }}
         >
-          {isRegistering ? 'ALREADY HAVE AN ACCOUNT? LOGIN' : 'NEW PLAYER? REGISTER HERE'}
+          {isRegistering
+            ? '👤  Already have an account? Login'
+            : '✨  New player? Register here'}
         </button>
       </form>
     </div>
